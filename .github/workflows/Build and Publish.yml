@@ -1,0 +1,29 @@
+name: Build and Publish to PyPI
+
+on:
+  push:
+    branches:
+      - main  # این کار را وقتی که تغییرات به شاخه اصلی می‌روند انجام می‌دهد
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Build package
+        run: |
+          python setup.py sdist bdist_wheel
+      - name: Publish to PyPI
+        run: |
+          twine upload dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
